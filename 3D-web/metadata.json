@@ -1,0 +1,8 @@
+{
+  "name": "Neurafab - 分布式AI制造平台",
+  "description": "一个通过生成式AI和IoT耗材追踪技术，连接闲置3D打印产能与超本地化定制制造需求的平台。",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

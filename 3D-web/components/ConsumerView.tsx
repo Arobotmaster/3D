@@ -1,0 +1,389 @@
+import React, { useState } from 'react';
+import { Wand2, Upload, Clock, Zap, Box, CheckCircle2, Sparkles, Package, Truck, Printer, Search, Video, Send } from 'lucide-react';
+import { generateAIResponse, generateImage } from '../services/geminiService';
+
+const EXAMPLES = [
+    {
+        title: "泰森多边形台灯",
+        prompt: "有机形态的Voronoi泰森多边形台灯罩，圆柱形，复杂几何结构用于光线漫射，现代设计风格",
+        // Updated image to a reliable one
+        image: "/voronoi_lamp.png"
+    },
+    {
+        title: "活动关节龙",
+        prompt: "可动的灵活龙形玩具，东方风格，精细的鳞片，一体化打印结构(print-in-place)，奇幻美学",
+        image: "https://images.unsplash.com/photo-1577493340887-b7bfff550145?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+        title: "赛博朋克耳机架",
+        prompt: "未来主义耳机支架，低多边形(low poly)美学，稳固底座，机能风，几何锐利边缘",
+        image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+        title: "参数化花盆",
+        prompt: "扭曲多边形多肉花盆，现代极简设计，波浪纹理，带自吸水底座",
+        image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=200&h=200"
+    }
+];
+
+const MY_ORDERS = [
+    {
+        id: "ORD-8829",
+        item: "定制Voronoi台灯",
+        status: "打印中",
+        progress: 65,
+        farm: "CyberPrint 实验室",
+        eta: "2小时 15分",
+        // Updated image to a reliable one
+        image: "/voronoi_lamp.png",
+        timeline: [
+            { status: '已下单', time: '10:30 AM', done: true },
+            { status: '分派至农场', time: '10:35 AM', done: true },
+            { status: '打印中', time: '进行中', done: false, current: true },
+            { status: '配送中', time: '预计 2:00 PM', done: false }
+        ]
+    },
+    {
+        id: "ORD-8825",
+        item: "替换齿轮组",
+        status: "配送中",
+        progress: 100,
+        farm: "Steve的极客车库",
+        eta: "15分钟",
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=100&h=100",
+        timeline: [
+            { status: '已下单', time: '昨天', done: true },
+            { status: '打印完成', time: '已完成', done: true },
+            { status: '质检通过', time: '通过', done: true },
+            { status: '骑手已取货', time: '10分钟前', done: true, current: true }
+        ]
+    }
+];
+
+export const ConsumerView: React.FC = () => {
+    const [view, setView] = useState<'create' | 'track'>('create');
+    const [prompt, setPrompt] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [generatedModel, setGeneratedModel] = useState<any>(null);
+
+    // ISSUE Methodology State
+    const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>([
+        { role: 'model', text: "您好！我是您的智能定制顾问。\n\n很多人想做点什么，但不知道具体做什么。没关系，我们可以一起探索。\n您最近在生活、工作或兴趣爱好中，有没有遇到什么需要 3D 打印解决的痛点？或者有什么一直想拥有的东西？" }
+    ]);
+    const [currentStep, setCurrentStep] = useState('Initiate');
+    const chatEndRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+    const handleSendMessage = async () => {
+        if (!prompt.trim()) return;
+
+        const userText = prompt;
+        setPrompt('');
+        setMessages(prev => [...prev, { role: 'user', text: userText }]);
+        setIsGenerating(true);
+
+        // Construct conversation history for context
+        const history = messages.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n');
+        const fullPrompt = `${history}\nUser: ${userText}\nAssistant:`;
+
+        const systemPrompt = `
+        你是一个基于 ISSUE 方法论的智能 3D 打印定制顾问。你的目标是通过对话引导用户，从模糊的想法挖掘出具体的 3D 打印需求，并最终生成方案。
+
+        ISSUE 方法论步骤：
+        1. Initiate (发起): 询问痛点、兴趣或需求。
+        2. Structure (结构化): 提供分类方向（如工具、礼物、收纳、IP周边等）供选择。
+        3. Socratic (苏格拉底式): 追问细节（场景、功能、风格、尺寸等）。
+        4. Unify (统一): 总结方案，给出参数（尺寸、材料）、报价和预估时间。
+        5. Execute (执行): 用户确认后，启动制造。
+
+        当前对话历史如下。请根据用户的回答，判断当前应该处于哪个步骤，并给出相应的回复。
+
+        重要规则：
+        - 回复的开头必须包含当前步骤的标签，格式为：[StepName]，例如 [Initiate], [Structure], [Socratic], [Unify], [Execute]。
+        - 在 [Unify] 阶段，请明确列出：**方案整合**、**精确报价**、**时间预估**。
+        - 在 [Execute] 阶段，如果用户确认了方案，请在回复中包含特殊标记 [GENERATE_IMAGE] 和一段用于生成图片的英文 Prompt（格式：Prompt: ...）。
+        - 保持语气专业、亲切、具有启发性。
+        `;
+
+        try {
+            const response = await generateAIResponse(
+                fullPrompt,
+                null,
+                systemPrompt,
+                "Qwen/Qwen2.5-72B-Instruct"
+            );
+
+            // Parse Step
+            const stepMatch = response.match(/\[(Initiate|Structure|Socratic|Unify|Execute)\]/i);
+            if (stepMatch) {
+                setCurrentStep(stepMatch[1]);
+            }
+
+            // Clean response for display (remove step tag)
+            const displayResponse = response.replace(/\[(Initiate|Structure|Socratic|Unify|Execute)\]/i, '').trim();
+
+            setMessages(prev => [...prev, { role: 'model', text: displayResponse }]);
+
+            // Check for Generation Trigger
+            if (response.includes('[GENERATE_IMAGE]')) {
+                const promptMatch = response.match(/Prompt:\s*(.+)/i);
+                const imagePrompt = promptMatch ? promptMatch[1] : userText; // Fallback to user text if prompt extraction fails
+
+                // Trigger Image Generation
+                const imageUrl = await generateImage(imagePrompt);
+
+                setGeneratedModel({
+                    name: "定制方案",
+                    description: "基于您的需求定制的专属模型",
+                    estTime: "4小时 30分", // Mock data, ideally parsed from AI response
+                    estCost: "¥45.00",    // Mock data
+                    material: "PLA 哑光",
+                    preview: imageUrl
+                });
+            }
+
+        } catch (e) {
+            console.error(e);
+            setMessages(prev => [...prev, { role: 'model', text: "抱歉，我稍微走神了，请您再说一遍？" }]);
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    return (
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            {/* Sub-Navigation Toggle */}
+            <div className="flex justify-center mb-8">
+                <div className="bg-slate-900 p-1 rounded-xl border border-slate-800 inline-flex">
+                    <button
+                        onClick={() => setView('create')}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${view === 'create' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                    >
+                        <Wand2 size={16} /> 设计与创造
+                    </button>
+                    <button
+                        onClick={() => setView('track')}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${view === 'track' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                    >
+                        <Package size={16} /> 订单追踪
+                    </button>
+                </div>
+            </div>
+
+            {view === 'create' ? (
+                // CREATE VIEW - ISSUE Methodology Implementation
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-12rem)]">
+                    {/* Left: Chat Interface (ISSUE Process) */}
+                    <div className="lg:col-span-2 flex flex-col bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+                        <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex justify-between items-center">
+                            <div>
+                                <h2 className="text-white font-bold flex items-center gap-2">
+                                    <Sparkles className="text-blue-400" size={18} />
+                                    智能定制助手
+                                </h2>
+                                <p className="text-xs text-slate-400 mt-1">基于 ISSUE 方法论的深度需求挖掘</p>
+                            </div>
+                            <div className="flex gap-2">
+                                {['Initiate', 'Structure', 'Socratic', 'Unify', 'Execute'].map((step, idx) => (
+                                    <div key={step} className={`px-2 py-1 rounded text-[10px] font-bold uppercase transition-colors ${currentStep === step ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/50' : 'bg-slate-800 text-slate-600'
+                                        }`}>
+                                        {step[0]}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth" id="issue-chat-container">
+                            {messages.map((msg, idx) => (
+                                <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`max-w-[85%] p-4 rounded-2xl ${msg.role === 'user'
+                                        ? 'bg-blue-600 text-white rounded-tr-none'
+                                        : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'
+                                        }`}>
+                                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                                    </div>
+                                </div>
+                            ))}
+                            {isGenerating && (
+                                <div className="flex justify-start">
+                                    <div className="bg-slate-800 rounded-2xl rounded-tl-none p-4 border border-slate-700">
+                                        <div className="flex gap-2">
+                                            <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce"></div>
+                                            <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce delay-100"></div>
+                                            <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce delay-200"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={chatEndRef} />
+                        </div>
+
+                        <div className="p-4 bg-slate-950 border-t border-slate-800">
+                            <div className="relative flex items-center gap-2">
+                                <input
+                                    type="text"
+                                    value={prompt}
+                                    onChange={(e) => setPrompt(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                                    placeholder="回复以继续对话..."
+                                    className="flex-1 bg-slate-800 text-white rounded-xl px-4 py-3 border border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                    disabled={isGenerating}
+                                />
+                                <button
+                                    onClick={handleSendMessage}
+                                    disabled={isGenerating || !prompt}
+                                    className={`p-3 rounded-xl transition-all ${isGenerating ? 'bg-slate-700 text-slate-400' : 'bg-blue-600 text-white hover:bg-blue-500'}`}
+                                >
+                                    <Send size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right: Real-time Visualization & Status */}
+                    <div className="flex flex-col gap-6">
+                        {/* Preview Card */}
+                        <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden flex-1 flex flex-col">
+                            <div className="p-4 border-b border-slate-800">
+                                <h3 className="text-white font-bold text-sm">实时方案预览</h3>
+                            </div>
+                            <div className="flex-1 relative bg-black flex items-center justify-center group">
+                                {generatedModel ? (
+                                    <>
+                                        <img src={generatedModel.preview} alt="Preview" className="w-full h-full object-cover opacity-80" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                                        <div className="absolute bottom-4 left-4 right-4">
+                                            <h4 className="text-white font-bold text-lg">{generatedModel.name}</h4>
+                                            <p className="text-xs text-slate-300 line-clamp-2 mt-1">{generatedModel.description}</p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="text-center p-6 opacity-50">
+                                        <Box size={48} className="mx-auto mb-4 text-slate-600" />
+                                        <p className="text-sm text-slate-500">
+                                            {currentStep === 'Execute' ? '正在生成最终方案...' : '待方案确认后生成预览'}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Specs Card */}
+                        {generatedModel && (
+                            <div className="bg-slate-900 rounded-2xl border border-slate-800 p-5 space-y-4 animate-in slide-in-from-bottom-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-xs text-slate-500 uppercase">预计时长</p>
+                                        <p className="text-white font-semibold">{generatedModel.estTime}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-slate-500 uppercase">预估费用</p>
+                                        <p className="text-emerald-400 font-semibold">{generatedModel.estCost}</p>
+                                    </div>
+                                </div>
+                                <button className="w-full py-3 bg-white text-slate-900 font-bold rounded-lg hover:bg-slate-200 transition-colors flex items-center justify-center gap-2">
+                                    <CheckCircle2 size={18} />
+                                    确认并制造
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ) : (
+                // TRACK ORDERS VIEW
+                <div className="max-w-4xl mx-auto">
+                    <h2 className="text-2xl font-bold text-white mb-6">进行中的订单</h2>
+                    <div className="space-y-6">
+                        {MY_ORDERS.map((order) => (
+                            <div key={order.id} className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
+                                <div className="p-6 flex flex-col md:flex-row gap-6">
+                                    {/* Visual Status */}
+                                    <div className="w-full md:w-1/3 relative">
+                                        <div className="aspect-square rounded-xl overflow-hidden bg-black relative">
+                                            <img src={order.image} alt={order.item} className="w-full h-full object-cover opacity-70" />
+                                            {/* Progress Overlay */}
+                                            {order.status === '打印中' && (
+                                                <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-800">
+                                                    <div className="h-full bg-blue-500" style={{ width: `${order.progress}%` }}></div>
+                                                </div>
+                                            )}
+                                            {/* Live Badge */}
+                                            <div className="absolute top-2 right-2 flex items-center gap-1 bg-red-600/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold uppercase text-white">
+                                                <Video size={10} /> 直播中
+                                            </div>
+                                        </div>
+                                        <div className="mt-3 flex justify-between items-center">
+                                            <p className="text-sm text-slate-400">承接农场</p>
+                                            <p className="text-sm font-semibold text-blue-400">{order.farm}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Details & Timeline */}
+                                    <div className="flex-1">
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div>
+                                                <h3 className="text-xl font-bold text-white">{order.item}</h3>
+                                                <p className="text-xs text-slate-500 mt-1">订单号: {order.id}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${order.status === '打印中' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                                                    order.status === '配送中' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                                        'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                    }`}>
+                                                    {order.status === '打印中' ? <Printer size={12} /> : <Truck size={12} />}
+                                                    {order.status}
+                                                </span>
+                                                <p className="text-sm font-medium text-white mt-2">预计送达: {order.eta}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Timeline */}
+                                        <div className="relative pl-4 border-l border-slate-800 space-y-6">
+                                            {order.timeline.map((step, idx) => (
+                                                <div key={idx} className="relative">
+                                                    <div className={`absolute -left-[21px] w-3 h-3 rounded-full border-2 ${step.current ? 'bg-blue-500 border-blue-500 animate-pulse' :
+                                                        step.done ? 'bg-slate-900 border-blue-500' :
+                                                            'bg-slate-900 border-slate-700'
+                                                        }`}></div>
+                                                    <div className="flex justify-between items-center">
+                                                        <p className={`text-sm font-medium ${step.done || step.current ? 'text-white' : 'text-slate-600'}`}>
+                                                            {step.status}
+                                                        </p>
+                                                        <p className="text-xs text-slate-500">{step.time}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {order.status === '配送中' && (
+                                            <div className="mt-6 bg-slate-950 p-3 rounded-lg border border-slate-800 flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500">
+                                                    <Truck size={16} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-white font-medium">骑手已在附近</p>
+                                                    <p className="text-xs text-slate-500">预计15分钟后送达</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div >
+    );
+};
+
+const FeatureCard = ({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) => (
+    <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-800/50 text-center hover:bg-slate-800 transition-colors cursor-default">
+        <div className="flex justify-center mb-2">{icon}</div>
+        <h4 className="text-white font-medium text-sm">{title}</h4>
+        <p className="text-slate-500 text-xs mt-1">{desc}</p>
+    </div>
+)
