@@ -19,36 +19,39 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     if (userRole === UserRole.CONSUMER) {
-        if (activeTab === 'create' || activeTab === 'track') return <ConsumerView />; // Handle internal toggle in ConsumerView, but if set from nav, default to ConsumerView
-        if (activeTab === 'community') return <CommunityView />;
+      if (activeTab === 'create' || activeTab === 'track') return <ConsumerView />; // Handle internal toggle in ConsumerView, but if set from nav, default to ConsumerView
+      if (activeTab === 'community') return <CommunityView />;
     } else if (userRole === UserRole.FARM_OWNER) {
-        if (activeTab === 'dashboard') return <FarmDashboard />;
-        if (activeTab === 'orders') return <FarmOrders />;
-        if (activeTab === 'repair') return <AIAssistant />;
-        if (activeTab === 'hub') return <FarmTechHub />;
+      if (activeTab === 'dashboard') return <FarmDashboard />;
+      if (activeTab === 'orders') return <FarmOrders />;
+      if (activeTab === 'repair') return <AIAssistant />;
+      if (activeTab === 'hub') return <FarmTechHub />;
     } else if (userRole === UserRole.DESIGNER) {
-        // Pass the activeTab to DesignerView to handle sub-navigation (tools, library, earnings)
-        return <DesignerView activeTab={activeTab} />;
+      // Pass the activeTab to DesignerView to handle sub-navigation (tools, library, earnings)
+      return <DesignerView activeTab={activeTab} />;
     }
     return <ConsumerView />;
   };
 
   return (
     <div className="min-h-screen bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
-      <Navbar 
-        currentRole={userRole} 
+      <Navbar
+        currentRole={userRole}
         onRoleChange={handleRoleChange}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
-      
+
       <main className="animate-in fade-in duration-500">
         {renderContent()}
       </main>
 
       {/* Footer watermark for the Demo */}
-      <footer className="fixed bottom-4 right-4 opacity-50 hover:opacity-100 transition-opacity">
+      <footer className="fixed bottom-4 right-4 text-right hover:opacity-100 transition-opacity">
         <p className="text-[10px] text-slate-600 font-mono">NEURAFAB v0.1.0-alpha | 构建版本: 2025.05.19</p>
+        <p className="text-sm text-blue-400 font-bold font-mono mt-1 bg-slate-900/80 px-2 py-1 rounded border border-blue-500/30 shadow-lg shadow-blue-500/10">
+          联系我们: 13209169744 (微信同号)
+        </p>
       </footer>
     </div>
   );
