@@ -85,6 +85,10 @@ export const ConsumerView: React.FC = () => {
         setMessages(prev => [...prev, { role: 'user', text: userText }]);
         setIsGenerating(true);
 
+        // Create placeholder for AI response
+        const aiMsgId = Date.now().toString();
+        setMessages(prev => [...prev, { role: 'model', text: '' }]); // Start with empty text
+
         // Construct conversation history for context
         const history = messages.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n');
         const fullPrompt = `${history}\nUser: ${userText}\nAssistant:`;
@@ -108,29 +112,47 @@ export const ConsumerView: React.FC = () => {
         - 保持语气专业、亲切、具有启发性。
         `;
 
+        let fullResponse = "";
+
         try {
-            const response = await generateAIResponse(
+            await generateAIResponse(
                 fullPrompt,
-                null,
+                (chunk) => {
+                    // Update UI with streaming text
+                    // We need to strip the step tag from the visual display if possible, 
+                    // but for streaming simplicity, we might show it initially or try to filter it on the fly.
+                    // For now, let's just stream the raw text and clean it up at the end or let the user see the tag (it's not terrible).
+                    // Better UX: Try to remove the tag from the streamed text if it's at the start.
+
+                    fullResponse = chunk; // The service returns the full accumulated text in the callback for this implementation? 
+                    // Checking geminiService.ts: yes, onStreamUpdate passes the *accumulated* text.
+
+                    const displayText = chunk.replace(/\[(Initiate|Structure|Socratic|Unify|Execute)\]/i, '').trim();
+
+                    setMessages(prev => {
+                        const newMessages = [...prev];
+                        const lastMsg = newMessages[newMessages.length - 1];
+                        if (lastMsg.role === 'model') {
+                            lastMsg.text = displayText;
+                        }
+                        return newMessages;
+                    });
+                },
                 systemPrompt,
                 "Qwen/Qwen2.5-72B-Instruct"
             );
 
+            // After stream completes, use fullResponse for logic
             // Parse Step
-            const stepMatch = response.match(/\[(Initiate|Structure|Socratic|Unify|Execute)\]/i);
+            const stepMatch = fullResponse.match(/\[(Initiate|Structure|Socratic|Unify|Execute)\]/i);
             if (stepMatch) {
                 setCurrentStep(stepMatch[1]);
             }
 
-            // Clean response for display (remove step tag)
-            const displayResponse = response.replace(/\[(Initiate|Structure|Socratic|Unify|Execute)\]/i, '').trim();
-
-            setMessages(prev => [...prev, { role: 'model', text: displayResponse }]);
-
             // Check for Generation Trigger
-            if (response.includes('[GENERATE_IMAGE]')) {
-                const promptMatch = response.match(/Prompt:\s*(.+)/i);
-                const imagePrompt = promptMatch ? promptMatch[1] : userText; // Fallback to user text if prompt extraction fails
+            if (fullResponse.includes('[GENERATE_IMAGE]')) {
+                const promptMatch = fullResponse.match(/Prompt:\s*(.+)/i);
+                const imagePrompt = promptMatch ? promptMatch[1] : userText;
 
                 // Trigger Image Generation
                 const imageUrl = await generateImage(imagePrompt);
@@ -138,8 +160,8 @@ export const ConsumerView: React.FC = () => {
                 setGeneratedModel({
                     name: "定制方案",
                     description: "基于您的需求定制的专属模型",
-                    estTime: "4小时 30分", // Mock data, ideally parsed from AI response
-                    estCost: "¥45.00",    // Mock data
+                    estTime: "4小时 30分",
+                    estCost: "¥45.00",
                     material: "PLA 哑光",
                     preview: imageUrl
                 });
@@ -147,7 +169,14 @@ export const ConsumerView: React.FC = () => {
 
         } catch (e) {
             console.error(e);
-            setMessages(prev => [...prev, { role: 'model', text: "抱歉，我稍微走神了，请您再说一遍？" }]);
+            setMessages(prev => {
+                const newMessages = [...prev];
+                const lastMsg = newMessages[newMessages.length - 1];
+                if (lastMsg.role === 'model' && !lastMsg.text) {
+                    lastMsg.text = "抱歉，我稍微走神了，请您再说一遍？";
+                }
+                return newMessages;
+            });
         } finally {
             setIsGenerating(false);
         }
