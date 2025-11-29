@@ -39,16 +39,11 @@ interface PlatformIntroProps {
 export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
     const [activeRole, setActiveRole] = useState<Role>('consumer');
     const [currentStep, setCurrentStep] = useState<number>(0);
-    const [isAnimating, setIsAnimating] = useState(false);
 
     // 切换角色时重置步骤
     const handleRoleChange = (role: Role) => {
-        setIsAnimating(true);
-        setTimeout(() => {
-            setActiveRole(role);
-            setCurrentStep(0);
-            setIsAnimating(false);
-        }, 300);
+        setActiveRole(role);
+        setCurrentStep(0);
     };
 
     // 1. 消费者旅程 (搞怪版)
@@ -384,7 +379,7 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             </div>
 
             {/* Interactive Flow Area */}
-            <div className={`grid md:grid-cols-2 gap-12 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="grid md:grid-cols-2 gap-12">
 
                 {/* Left: Steps Navigation */}
                 <div className="space-y-4">
