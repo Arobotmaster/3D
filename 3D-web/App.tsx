@@ -7,6 +7,7 @@ import { CommunityView } from './components/CommunityView';
 import { FarmTechHub } from './components/FarmTechHub';
 import { FarmOrders } from './components/FarmOrders';
 import { DesignerView } from './components/DesignerView';
+import { PlatformIntro } from './components/PlatformIntro';
 import { UserRole } from './types';
 
 const App: React.FC = () => {
@@ -18,6 +19,8 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
+    if (activeTab === 'intro') return <PlatformIntro />;
+
     if (userRole === UserRole.CONSUMER) {
       if (activeTab === 'create' || activeTab === 'track') return <ConsumerView />; // Handle internal toggle in ConsumerView, but if set from nav, default to ConsumerView
       if (activeTab === 'community') return <CommunityView />;
