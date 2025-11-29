@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Wand2, Upload, Clock, Zap, Box, CheckCircle2, Sparkles, Package, Truck, Printer, Search, Video, Send } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Wand2, Upload, Clock, Zap, Box, CheckCircle2, Sparkles, Package, Truck, Printer, Search, Video, Send, PenTool, X, Eraser, Check, Trash2, Image as ImageIcon } from 'lucide-react';
 import { generateAIResponse, generateImage } from '../services/geminiService';
 
 const EXAMPLES = [
@@ -62,15 +62,25 @@ const MY_ORDERS = [
 
 interface ConsumerViewProps {
     activeTab?: string;
+    onTabChange?: (tab: string) => void;
 }
 
-export const ConsumerView: React.FC<ConsumerViewProps> = ({ activeTab = 'create' }) => {
+export const ConsumerView: React.FC<ConsumerViewProps> = ({ activeTab = 'create', onTabChange }) => {
     const [prompt, setPrompt] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [generatedModel, setGeneratedModel] = useState<any>(null);
 
+
+
+    // Drawing State
+    const [showDrawingBoard, setShowDrawingBoard] = useState(false);
+    const [drawingData, setDrawingData] = useState<string | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
+
     // ISSUE Methodology State
-    const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>([
+    const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string, image?: string }[]>([
         { role: 'model', text: "您好！我是您的智能定制顾问。\n\n很多人想做点什么，但不知道具体做什么。没关系，我们可以一起探索。\n您最近在生活、工作或兴趣爱好中，有没有遇到什么需要 3D 打印解决的痛点？或者有什么一直想拥有的东西？" }
     ]);
     const [currentStep, setCurrentStep] = useState('Initiate');
@@ -81,11 +91,15 @@ export const ConsumerView: React.FC<ConsumerViewProps> = ({ activeTab = 'create'
     }, [messages]);
 
     const handleSendMessage = async () => {
-        if (!prompt.trim()) return;
+        if (!prompt.trim() && !drawingData) return;
 
         const userText = prompt;
+        const userImage = drawingData;
+
         setPrompt('');
-        setMessages(prev => [...prev, { role: 'user', text: userText }]);
+        setDrawingData(null); // Clear drawing after sending
+
+        setMessages(prev => [...prev, { role: 'user', text: userText, image: userImage }]);
         setIsGenerating(true);
 
         // Create placeholder for AI response
@@ -93,8 +107,8 @@ export const ConsumerView: React.FC<ConsumerViewProps> = ({ activeTab = 'create'
         setMessages(prev => [...prev, { role: 'model', text: '' }]); // Start with empty text
 
         // Construct conversation history for context
-        const history = messages.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n');
-        const fullPrompt = `${history}\nUser: ${userText}\nAssistant:`;
+        const history = messages.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text} ${m.image ? '[User attached a sketch]' : ''}`).join('\n');
+        const fullPrompt = `${history}\nUser: ${userText} ${userImage ? '[User attached a sketch]' : ''}\nAssistant:`;
 
         const systemPrompt = `
         你是一个基于 ISSUE 方法论的智能 3D 打印定制顾问。你的目标是通过对话引导用户，从模糊的想法挖掘出具体的 3D 打印需求，并最终生成方案。
@@ -185,11 +199,145 @@ export const ConsumerView: React.FC<ConsumerViewProps> = ({ activeTab = 'create'
         }
     };
 
+    // Drawing Functions
+    useEffect(() => {
+        // Sync drawing board visibility with activeTab
+        if (activeTab === 'draw') {
+            setShowDrawingBoard(true);
+        } else {
+            // Only hide if we are not in 'create' mode (where it can be a modal)
+            // But actually, if we switch away from 'draw', we should probably hide it unless we want to persist it.
+            // For now, let's just rely on the modal logic.
+            // If activeTab is 'draw', force show.
+        }
+
+        if (showDrawingBoard && canvasRef.current) {
+            const canvas = canvasRef.current;
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            const context = canvas.getContext('2d');
+            if (context) {
+                context.lineCap = 'round';
+                context.lineJoin = 'round';
+                context.strokeStyle = '#ffffff';
+                context.lineWidth = 3;
+                setCtx(context);
+            }
+        }
+    }, [showDrawingBoard, activeTab]);
+
+    const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+        if (!ctx) return;
+        setIsDrawing(true);
+        const { offsetX, offsetY } = getCoordinates(e);
+        ctx.beginPath();
+        ctx.moveTo(offsetX, offsetY);
+    };
+
+    const draw = (e: React.MouseEvent | React.TouchEvent) => {
+        if (!isDrawing || !ctx) return;
+        const { offsetX, offsetY } = getCoordinates(e);
+        ctx.lineTo(offsetX, offsetY);
+        ctx.stroke();
+    };
+
+    const stopDrawing = () => {
+        if (ctx) ctx.closePath();
+        setIsDrawing(false);
+    };
+
+    const getCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
+        if (!canvasRef.current) return { offsetX: 0, offsetY: 0 };
+        const canvas = canvasRef.current;
+
+        if ('touches' in e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                offsetX: e.touches[0].clientX - rect.left,
+                offsetY: e.touches[0].clientY - rect.top
+            };
+        } else {
+            return {
+                offsetX: (e as React.MouseEvent).nativeEvent.offsetX,
+                offsetY: (e as React.MouseEvent).nativeEvent.offsetY
+            };
+        }
+    };
+
+    const clearCanvas = () => {
+        if (ctx && canvasRef.current) {
+            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        }
+    };
+
+    const confirmDrawing = () => {
+        if (canvasRef.current) {
+            setDrawingData(canvasRef.current.toDataURL());
+            setShowDrawingBoard(false);
+            if (activeTab === 'draw' && onTabChange) {
+                onTabChange('create');
+            }
+        }
+    };
+
     return (
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            {/* Drawing Modal - Show if showDrawingBoard is true OR activeTab is 'draw' */}
+            {(showDrawingBoard || activeTab === 'draw') && (
+                <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200 ${activeTab === 'draw' ? 'bg-slate-950/100' : ''}`}>
+                    <div className="bg-slate-900 rounded-2xl border border-slate-800 w-full max-w-2xl flex flex-col shadow-2xl h-[80vh]">
+                        <div className="p-4 border-b border-slate-800 flex justify-between items-center">
+                            <h3 className="text-white font-bold flex items-center gap-2">
+                                <PenTool size={18} className="text-blue-400" />
+                                自由绘图板
+                            </h3>
+                            <button onClick={() => {
+                                setShowDrawingBoard(false);
+                                if (activeTab === 'draw' && onTabChange) onTabChange('create');
+                            }} className="text-slate-400 hover:text-white">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="relative flex-1 bg-slate-950 m-4 rounded-xl border border-slate-800 overflow-hidden cursor-crosshair touch-none">
+                            <canvas
+                                ref={canvasRef}
+                                className="w-full h-full"
+                                onMouseDown={startDrawing}
+                                onMouseMove={draw}
+                                onMouseUp={stopDrawing}
+                                onMouseLeave={stopDrawing}
+                                onTouchStart={startDrawing}
+                                onTouchMove={draw}
+                                onTouchEnd={stopDrawing}
+                            />
+                            <div className="absolute top-4 left-4 text-xs text-slate-500 pointer-events-none select-none">
+                                请在此处绘制您的创意草图...
+                            </div>
+                        </div>
+                        <div className="p-4 border-t border-slate-800 flex justify-between items-center">
+                            <button onClick={clearCanvas} className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+                                <Trash2 size={16} />
+                                清空
+                            </button>
+                            <div className="flex gap-3">
+                                <button onClick={() => {
+                                    setShowDrawingBoard(false);
+                                    if (activeTab === 'draw' && onTabChange) onTabChange('create');
+                                }} className="px-4 py-2 text-slate-300 hover:text-white transition-colors">
+                                    取消
+                                </button>
+                                <button onClick={confirmDrawing} className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors">
+                                    <Check size={16} />
+                                    确认使用
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             {/* Sub-Navigation Toggle Removed - Moved to Top Navbar */}
 
-            {activeTab === 'create' ? (
+            {(activeTab === 'create' || activeTab === 'draw') ? (
                 // CREATE VIEW - ISSUE Methodology Implementation
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-12rem)]">
                     {/* Left: Chat Interface (ISSUE Process) */}
@@ -219,6 +367,11 @@ export const ConsumerView: React.FC<ConsumerViewProps> = ({ activeTab = 'create'
                                         ? 'bg-blue-600 text-white rounded-tr-none'
                                         : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'
                                         }`}>
+                                        {msg.image && (
+                                            <div className="mb-3 rounded-lg overflow-hidden border border-white/10">
+                                                <img src={msg.image} alt="User sketch" className="w-full h-auto bg-slate-950" />
+                                            </div>
+                                        )}
                                         <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                                     </div>
                                 </div>
@@ -238,7 +391,33 @@ export const ConsumerView: React.FC<ConsumerViewProps> = ({ activeTab = 'create'
                         </div>
 
                         <div className="p-4 bg-slate-950 border-t border-slate-800">
+                            {drawingData && (
+                                <div className="mb-3 flex items-start gap-2 animate-in slide-in-from-bottom-2">
+                                    <div className="relative group">
+                                        <div className="w-20 h-20 rounded-lg border border-slate-700 overflow-hidden bg-slate-900">
+                                            <img src={drawingData} alt="Sketch" className="w-full h-full object-contain" />
+                                        </div>
+                                        <button
+                                            onClick={() => setDrawingData(null)}
+                                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                    </div>
+                                    <div className="text-xs text-slate-500 mt-1">
+                                        <p>已附加草图</p>
+                                        <p>将结合文字描述生成</p>
+                                    </div>
+                                </div>
+                            )}
                             <div className="relative flex items-center gap-2">
+                                <button
+                                    onClick={() => setShowDrawingBoard(true)}
+                                    className="p-3 bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 rounded-xl border border-slate-700 transition-all"
+                                    title="绘制草图"
+                                >
+                                    <PenTool size={20} />
+                                </button>
                                 <input
                                     type="text"
                                     value={prompt}

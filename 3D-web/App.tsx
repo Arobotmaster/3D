@@ -28,7 +28,7 @@ const App: React.FC = () => {
     if (activeTab === 'intro') return <PlatformIntro onNavigate={handleIntroNavigate} />;
 
     if (userRole === UserRole.CONSUMER) {
-      if (activeTab === 'create' || activeTab === 'track') return <ConsumerView activeTab={activeTab} />;
+      if (activeTab === 'create' || activeTab === 'track' || activeTab === 'draw') return <ConsumerView activeTab={activeTab} onTabChange={setActiveTab} />;
       if (activeTab === 'community') return <CommunityView />;
     } else if (userRole === UserRole.FARM_OWNER) {
       if (activeTab === 'dashboard') return <FarmDashboard />;

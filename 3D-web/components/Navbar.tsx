@@ -26,6 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRole, onRoleChange, activ
               {currentRole === UserRole.CONSUMER && (
                 <>
                   <NavItem icon={<ShoppingBag size={18} />} label="设计与创造" active={activeTab === 'create'} onClick={() => onTabChange('create')} />
+                  <NavItem icon={<PenTool size={18} />} label="自由绘图" active={activeTab === 'draw'} onClick={() => onTabChange('draw')} />
                   <NavItem icon={<Package size={18} />} label="订单追踪" active={activeTab === 'track'} onClick={() => onTabChange('track')} />
                   <NavItem icon={<Users size={18} />} label="社区 & 制造者" active={activeTab === 'community'} onClick={() => onTabChange('community')} />
                 </>
