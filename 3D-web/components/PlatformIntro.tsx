@@ -55,15 +55,15 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             icon: Sparkles,
             detail: (
                 <div className="space-y-4">
-                    <div className="bg-slate-800 p-3 rounded-lg border border-slate-700">
-                        <p className="text-slate-400 text-xs mb-1">你的脑洞</p>
-                        <p className="text-white text-sm">"整一个赛博朋克风的手机支架，要那种让人看了就想问链接的！"</p>
+                    <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                        <p className="text-slate-400 text-sm mb-1">你的脑洞</p>
+                        <p className="text-white text-base">"整一个赛博朋克风的手机支架，要那种让人看了就想问链接的！"</p>
                     </div>
-                    <div className="flex justify-center items-center h-24 bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-lg border border-blue-500/30 relative overflow-hidden">
+                    <div className="flex justify-center items-center h-28 bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-lg border border-blue-500/30 relative overflow-hidden">
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <Box className="w-12 h-12 text-blue-400 animate-pulse" />
+                            <Box className="w-14 h-14 text-blue-400 animate-pulse" />
                         </div>
-                        <p className="absolute bottom-2 text-xs text-blue-300">AI 正在疯狂建模中...</p>
+                        <p className="absolute bottom-3 text-sm text-blue-300">AI 正在疯狂建模中...</p>
                     </div>
                 </div>
             )
@@ -74,27 +74,27 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             desc: "全城闲置打印机正在争抢你的订单",
             icon: MapPin,
             detail: (
-                <div className="space-y-3">
-                    <div className="relative h-32 bg-slate-800 rounded-lg overflow-hidden border border-slate-700 p-4">
+                <div className="space-y-4">
+                    <div className="relative h-36 bg-slate-800 rounded-lg overflow-hidden border border-slate-700 p-4">
                         <div className="absolute top-1/2 left-1/2 w-full h-full bg-blue-500/5 rounded-full -translate-x-1/2 -translate-y-1/2 animate-ping" />
-                        <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-blue-500 rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_15px_rgba(59,130,246,1)] z-10">
-                            <div className="absolute -top-8 -left-8 bg-slate-900/90 text-[10px] text-white px-2 py-1 rounded border border-blue-500/50 whitespace-nowrap">
+                        <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-blue-500 rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_15px_rgba(59,130,246,1)] z-10">
+                            <div className="absolute -top-9 -left-10 bg-slate-900/90 text-xs text-white px-2.5 py-1 rounded border border-blue-500/50 whitespace-nowrap">
                                 我是甲方爸爸
                             </div>
                         </div>
 
                         <div className="absolute top-1/4 left-1/4 flex flex-col items-center animate-bounce duration-1000">
-                            <Printer className="w-4 h-4 text-green-400" />
-                            <span className="text-[9px] text-slate-400">0.8km</span>
+                            <Printer className="w-5 h-5 text-green-400" />
+                            <span className="text-[10px] text-slate-400">0.8km</span>
                         </div>
                         <div className="absolute bottom-1/3 right-1/4 flex flex-col items-center animate-bounce duration-[1500ms]">
-                            <Printer className="w-4 h-4 text-slate-600" />
-                            <span className="text-[9px] text-slate-500">忙碌</span>
+                            <Printer className="w-5 h-5 text-slate-600" />
+                            <span className="text-[10px] text-slate-500">忙碌</span>
                         </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-green-400 bg-green-900/20 p-2 rounded">
+                    <div className="flex items-center justify-between text-sm text-green-400 bg-green-900/20 p-3 rounded">
                         <span>匹配成功: 隔壁老王的 Voron 2.4 已接单</span>
-                        <CheckCircle2 className="w-4 h-4" />
+                        <CheckCircle2 className="w-5 h-5" />
                     </div>
                 </div>
             )
@@ -105,13 +105,13 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             desc: "比淘宝定制快，比工厂开模省，主打一个‘快’",
             icon: Package,
             detail: (
-                <div className="space-y-4 text-center py-6">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full shadow-lg shadow-blue-500/50 mb-2">
-                        <Package className="w-8 h-8 text-white" />
+                <div className="space-y-4 text-center py-8">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-full shadow-lg shadow-blue-500/50 mb-3">
+                        <Package className="w-10 h-10 text-white" />
                     </div>
                     <div>
-                        <h4 className="text-white font-bold">你的宝贝已送达</h4>
-                        <p className="text-slate-400 text-sm mt-1">立省 60% 成本 <br /> 传统工厂看完都沉默了</p>
+                        <h4 className="text-white font-bold text-lg">你的宝贝已送达</h4>
+                        <p className="text-slate-400 text-base mt-2">立省 60% 成本 <br /> 传统工厂看完都沉默了</p>
                     </div>
                 </div>
             )
@@ -128,23 +128,23 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             detail: (
                 <div className="space-y-4">
                     <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 relative overflow-hidden">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="bg-purple-900/50 p-2 rounded">
-                                <Box className="w-6 h-6 text-purple-400" />
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="bg-purple-900/50 p-2.5 rounded">
+                                <Box className="w-8 h-8 text-purple-400" />
                             </div>
                             <div>
-                                <p className="text-white text-sm font-medium">机甲暴龙_终极帅气版.stl</p>
-                                <p className="text-slate-500 text-xs">12.4 MB • 240k 面</p>
+                                <p className="text-white text-base font-medium">机甲暴龙_终极帅气版.stl</p>
+                                <p className="text-slate-500 text-sm">12.4 MB • 240k 面</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2 bg-green-900/20 px-2 py-1 rounded w-fit">
-                            <ShieldCheck className="w-3 h-3 text-green-400" />
-                            <span className="text-[10px] text-green-400">谁也别想白嫖你的设计</span>
+                        <div className="flex items-center gap-2 bg-green-900/20 px-3 py-1.5 rounded w-fit">
+                            <ShieldCheck className="w-4 h-4 text-green-400" />
+                            <span className="text-xs text-green-400">谁也别想白嫖你的设计</span>
                         </div>
                         {/* Scanline effect */}
                         <div className="absolute top-0 left-0 w-full h-1 bg-purple-500/50 blur-sm animate-[scan_2s_ease-in-out_infinite]" style={{ top: '50%' }} />
                     </div>
-                    <p className="text-xs text-center text-slate-500">你的创意受保护，盗版商看了直摇头</p>
+                    <p className="text-sm text-center text-slate-500">你的创意受保护，盗版商看了直摇头</p>
                 </div>
             )
         },
@@ -154,32 +154,32 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             desc: "只给机器看 G-Code，源文件藏进保险箱",
             icon: ShieldCheck,
             detail: (
-                <div className="space-y-2">
-                    <div className="flex justify-between items-center px-4">
+                <div className="space-y-3">
+                    <div className="flex justify-between items-center px-2">
                         <div className="text-center">
-                            <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 mx-auto mb-1">
-                                <Box className="w-5 h-5 text-purple-400" />
+                            <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 mx-auto mb-2">
+                                <Box className="w-6 h-6 text-purple-400" />
                             </div>
-                            <span className="text-[10px] text-slate-400">你的宝贝模型</span>
+                            <span className="text-xs text-slate-400">你的宝贝模型</span>
                         </div>
 
                         {/* Encrypted Stream Visualization */}
-                        <div className="flex-1 mx-2 h-1 bg-slate-800 rounded relative overflow-hidden">
+                        <div className="flex-1 mx-3 h-1.5 bg-slate-800 rounded relative overflow-hidden">
                             <div className="absolute top-0 left-0 h-full w-1/2 bg-purple-600 animate-[slide_1.5s_linear_infinite]" />
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-900 px-1">
-                                <span className="text-[8px] text-purple-400 border border-purple-500/30 px-1 rounded">G-Code 密流</span>
+                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-slate-900 px-1">
+                                <span className="text-[10px] text-purple-400 border border-purple-500/30 px-1.5 rounded">G-Code 密流</span>
                             </div>
                         </div>
 
                         <div className="text-center">
-                            <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 mx-auto mb-1">
-                                <Printer className="w-5 h-5 text-slate-400" />
+                            <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 mx-auto mb-2">
+                                <Printer className="w-6 h-6 text-slate-400" />
                             </div>
-                            <span className="text-[10px] text-slate-400">干活的机器</span>
+                            <span className="text-xs text-slate-400">干活的机器</span>
                         </div>
                     </div>
-                    <div className="bg-red-900/20 p-2 rounded border border-red-900/50 text-center">
-                        <p className="text-[10px] text-red-300">🚫 伸手党退散！源文件已加密</p>
+                    <div className="bg-red-900/20 p-3 rounded border border-red-900/50 text-center">
+                        <p className="text-xs text-red-300">🚫 伸手党退散！源文件已加密</p>
                     </div>
                 </div>
             )
@@ -191,18 +191,18 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             icon: Coins,
             detail: (
                 <div className="bg-slate-800 rounded-lg p-0 overflow-hidden border border-slate-700">
-                    <div className="bg-purple-600/20 p-2 border-b border-purple-500/20 flex justify-between items-center">
-                        <span className="text-purple-400 text-xs font-bold">支付宝到账提醒</span>
-                        <span className="text-purple-400 text-[10px]">刚刚</span>
+                    <div className="bg-purple-600/20 p-3 border-b border-purple-500/20 flex justify-between items-center">
+                        <span className="text-purple-400 text-sm font-bold">支付宝到账提醒</span>
+                        <span className="text-purple-400 text-xs">刚刚</span>
                     </div>
-                    <div className="p-4 flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0">
-                            <span className="text-yellow-500 font-bold">¥</span>
+                    <div className="p-5 flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0">
+                            <span className="text-yellow-500 font-bold text-lg">¥</span>
                         </div>
                         <div>
-                            <p className="text-white text-sm font-medium">+ ¥5.00 版税</p>
-                            <p className="text-[10px] text-slate-400">来源: 订单 #8829 (有个上海土豪打了)</p>
-                            <p className="text-[10px] text-slate-500 mt-1">模型: 机甲暴龙_终极帅气版</p>
+                            <p className="text-white text-base font-medium">+ ¥5.00 版税</p>
+                            <p className="text-xs text-slate-400">来源: 订单 #8829 (有个上海土豪打了)</p>
+                            <p className="text-xs text-slate-500 mt-1">模型: 机甲暴龙_终极帅气版</p>
                         </div>
                     </div>
                 </div>
@@ -218,18 +218,18 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             desc: "机器开工，电费回血，还能赚个夜宵钱",
             icon: Zap,
             detail: (
-                <div className="space-y-3">
-                    <div className="flex items-center justify-between bg-slate-800 p-3 rounded-lg border border-slate-700">
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between bg-slate-800 p-4 rounded-lg border border-slate-700">
                         <div className="flex items-center gap-3">
-                            <Printer className="w-8 h-8 text-slate-400" />
+                            <Printer className="w-10 h-10 text-slate-400" />
                             <div>
-                                <p className="text-white text-sm font-medium">Bambu Lab X1C</p>
-                                <p className="text-slate-500 text-xs">状态: 饿了，求喂码</p>
+                                <p className="text-white text-base font-medium">Bambu Lab X1C</p>
+                                <p className="text-slate-500 text-sm">状态: 饿了，求喂码</p>
                             </div>
                         </div>
-                        <div className="h-3 w-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
+                        <div className="h-4 w-4 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
                     </div>
-                    <p className="text-xs text-slate-400 text-center">扫码上岗，你的机器就是印钞机</p>
+                    <p className="text-sm text-slate-400 text-center">扫码上岗，你的机器就是印钞机</p>
                 </div>
             )
         },
@@ -240,20 +240,20 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             icon: Cpu,
             detail: (
                 <div className="bg-slate-800 rounded-lg p-0 overflow-hidden border border-slate-700">
-                    <div className="bg-blue-600/20 p-2 border-b border-blue-500/20 flex justify-between items-center">
-                        <span className="text-blue-400 text-xs font-bold">老板，来大单了！</span>
-                        <span className="text-blue-400 text-[10px]">刚刚</span>
+                    <div className="bg-blue-600/20 p-3 border-b border-blue-500/20 flex justify-between items-center">
+                        <span className="text-blue-400 text-sm font-bold">老板，来大单了！</span>
+                        <span className="text-blue-400 text-xs">刚刚</span>
                     </div>
-                    <div className="p-3 space-y-2">
+                    <div className="p-4 space-y-3">
                         <div className="flex justify-between">
-                            <span className="text-white text-sm">定制镂空手机架</span>
-                            <span className="text-green-400 font-mono">¥35.00</span>
+                            <span className="text-white text-base">定制镂空手机架</span>
+                            <span className="text-green-400 font-mono text-lg">¥35.00</span>
                         </div>
                         <div className="flex gap-2">
-                            <span className="px-2 py-0.5 bg-slate-700 rounded text-[10px] text-slate-300">PLA</span>
-                            <span className="px-2 py-0.5 bg-slate-700 rounded text-[10px] text-slate-300">3h 20m</span>
+                            <span className="px-2.5 py-1 bg-slate-700 rounded text-xs text-slate-300">PLA</span>
+                            <span className="px-2.5 py-1 bg-slate-700 rounded text-xs text-slate-300">3h 20m</span>
                         </div>
-                        <button className="w-full mt-2 bg-blue-600 hover:bg-blue-500 text-white text-xs py-2 rounded transition-colors">
+                        <button className="w-full mt-2 bg-blue-600 hover:bg-blue-500 text-white text-sm py-2.5 rounded transition-colors">
                             接单！让喷头躁起来
                         </button>
                     </div>
@@ -266,21 +266,21 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             desc: "只要不炸机，全是纯利润",
             icon: Wallet,
             detail: (
-                <div className="space-y-3">
-                    <div className="flex gap-2 items-start bg-yellow-900/20 p-2 rounded border border-yellow-700/50">
-                        <Wrench className="w-4 h-4 text-yellow-500 mt-0.5 shrink-0" />
+                <div className="space-y-4">
+                    <div className="flex gap-3 items-start bg-yellow-900/20 p-3 rounded border border-yellow-700/50">
+                        <Wrench className="w-5 h-5 text-yellow-500 mt-0.5 shrink-0" />
                         <div>
-                            <p className="text-yellow-200 text-xs font-bold">AI 监控助手</p>
-                            <p className="text-yellow-200/70 text-[10px]">AI: 刚才差点炒面了，还好我帮你调了下热床，不用谢。</p>
+                            <p className="text-yellow-200 text-sm font-bold">AI 监控助手</p>
+                            <p className="text-yellow-200/70 text-xs">AI: 刚才差点炒面了，还好我帮你调了下热床，不用谢。</p>
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-green-900/40 to-emerald-900/40 p-4 rounded-lg border border-green-500/30 flex justify-between items-center">
+                    <div className="bg-gradient-to-r from-green-900/40 to-emerald-900/40 p-5 rounded-lg border border-green-500/30 flex justify-between items-center">
                         <div>
-                            <p className="text-slate-400 text-xs">本月摸鱼收益</p>
-                            <p className="text-2xl text-white font-mono font-bold">¥1,240</p>
+                            <p className="text-slate-400 text-sm">本月摸鱼收益</p>
+                            <p className="text-3xl text-white font-mono font-bold">¥1,240</p>
                         </div>
-                        <Wallet className="w-8 h-8 text-green-400 opacity-50" />
+                        <Wallet className="w-10 h-10 text-green-400 opacity-50" />
                     </div>
                 </div>
             )
@@ -337,42 +337,40 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 animate-in fade-in duration-500 h-[calc(100vh-4rem)] flex flex-col justify-center">
+        <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 animate-in fade-in duration-500 h-[calc(100vh-4rem)] flex flex-col">
 
-            {/* Header / Role Switcher */}
-            <div className="text-center mb-6 shrink-0">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent mb-4">
-                    Neurafab.ai：搞点好玩的
-                </h2>
-
-                <div className="inline-flex bg-slate-900 p-1 rounded-full border border-slate-800 shadow-inner relative w-[325px]">
+            {/* Top Role Switcher - Tab Style */}
+            <div className="flex justify-center mb-4 shrink-0">
+                <div className="bg-slate-900/80 backdrop-blur p-1 rounded-xl border border-slate-800 inline-flex w-full max-w-md relative">
                     {/* Animated Background Pill */}
                     <div
-                        className={`absolute top-1 bottom-1 w-[105px] rounded-full transition-all duration-300 ease-in-out ${themeColor} ${getPillPosition()}`}
+                        className={`absolute top-1 bottom-1 w-[32.5%] rounded-lg transition-all duration-300 ease-in-out ${themeColor} ${activeRole === 'consumer' ? 'left-1' :
+                            activeRole === 'designer' ? 'left-[33.75%]' : 'left-[66.5%]'
+                            }`}
                     />
 
                     <button
                         onClick={() => handleRoleChange('consumer')}
-                        className={`relative z-10 w-[105px] py-1.5 rounded-full flex items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-300 ${activeRole === 'consumer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                        className={`relative z-10 flex-1 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm font-bold transition-colors duration-300 ${activeRole === 'consumer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                             }`}
                     >
-                        <User className="w-3.5 h-3.5" />
+                        <User className="w-4 h-4" />
                         我是消费者
                     </button>
                     <button
                         onClick={() => handleRoleChange('designer')}
-                        className={`relative z-10 w-[105px] py-1.5 rounded-full flex items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-300 ${activeRole === 'designer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                        className={`relative z-10 flex-1 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm font-bold transition-colors duration-300 ${activeRole === 'designer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                             }`}
                     >
-                        <PenTool className="w-3.5 h-3.5" />
+                        <PenTool className="w-4 h-4" />
                         我是设计师
                     </button>
                     <button
                         onClick={() => handleRoleChange('farmer')}
-                        className={`relative z-10 w-[105px] py-1.5 rounded-full flex items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-300 ${activeRole === 'farmer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                        className={`relative z-10 flex-1 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm font-bold transition-colors duration-300 ${activeRole === 'farmer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                             }`}
                     >
-                        <Printer className="w-3.5 h-3.5" />
+                        <Printer className="w-4 h-4" />
                         我是农场主
                     </button>
                 </div>
@@ -382,7 +380,7 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             <div className="grid md:grid-cols-2 gap-8 items-center flex-1 min-h-0">
 
                 {/* Left: Steps Navigation */}
-                <div className="space-y-3">
+                <div className="space-y-3 h-full flex flex-col justify-center">
                     {currentStepsData.map((step, index) => {
                         const isActive = currentStep === index;
                         const Icon = step.icon;
@@ -406,7 +404,7 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
                             <div
                                 key={step.id}
                                 onClick={() => setCurrentStep(index)}
-                                className={`relative group cursor-pointer p-4 rounded-xl border transition-all duration-300 overflow-hidden ${isActive
+                                className={`relative group cursor-pointer p-5 rounded-2xl border transition-all duration-300 overflow-hidden ${isActive
                                     ? `border-transparent shadow-lg`
                                     : 'bg-slate-900 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
                                     }`}
@@ -420,19 +418,19 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
 
                                 {/* Active Border Gradient (Simulated) */}
                                 {isActive && (
-                                    <div className={`absolute inset-0 border-2 rounded-xl pointer-events-none ${activeBorderClass}`} />
+                                    <div className={`absolute inset-0 border-2 rounded-2xl pointer-events-none ${activeBorderClass}`} />
                                 )}
-                                <div className="flex items-start gap-3">
-                                    <div className={`p-2 rounded-lg transition-colors duration-300 ${isActive ? `${activeBgClass} text-white` : 'bg-slate-800 text-slate-400'
+                                <div className="flex items-start gap-4">
+                                    <div className={`p-3 rounded-xl transition-colors duration-300 ${isActive ? `${activeBgClass} text-white` : 'bg-slate-800 text-slate-400'
                                         }`}>
-                                        <Icon className="w-5 h-5" />
+                                        <Icon className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h3 className={`font-bold text-base mb-0.5 transition-colors ${isActive ? activeTextClass : 'text-slate-300'
+                                        <h3 className={`font-bold text-lg mb-1 transition-colors ${isActive ? activeTextClass : 'text-slate-300'
                                             }`}>
                                             {index + 1}. {step.title}
                                         </h3>
-                                        <p className="text-xs text-slate-500 leading-relaxed">
+                                        <p className="text-sm text-slate-500 leading-relaxed">
                                             {step.desc}
                                         </p>
                                     </div>
@@ -440,12 +438,12 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
 
                                 {/* Arrow Connector */}
                                 {index !== currentStepsData.length - 1 && (
-                                    <div className={`absolute left-[34px] -bottom-6 w-0.5 h-6 bg-slate-800 group-hover:bg-slate-700 transition-colors ${isActive ? 'bg-slate-700' : ''}`} />
+                                    <div className={`absolute left-[42px] -bottom-6 w-0.5 h-6 bg-slate-800 group-hover:bg-slate-700 transition-colors ${isActive ? 'bg-slate-700' : ''}`} />
                                 )}
 
                                 {/* Active Indicator Arrow */}
                                 {isActive && (
-                                    <ArrowRight className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-pulse hidden md:block ${activeTextClass}`} />
+                                    <ArrowRight className={`absolute right-5 top-1/2 -translate-y-1/2 w-6 h-6 animate-pulse hidden md:block ${activeTextClass}`} />
                                 )}
                             </div>
                         );
@@ -455,27 +453,27 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
                 {/* Right: Dynamic Detail View */}
                 <div className="relative flex items-center justify-center h-full">
                     {/* Phone Frame */}
-                    <div className="bg-slate-900 border-4 border-slate-800 rounded-[2rem] p-2 h-[420px] shadow-2xl w-full max-w-[300px] overflow-hidden ring-1 ring-white/5 relative">
+                    <div className="bg-slate-900 border-4 border-slate-800 rounded-[2.5rem] p-3 h-[520px] shadow-2xl w-full max-w-[340px] overflow-hidden ring-1 ring-white/5 relative">
                         {/* Dynamic Content Container */}
-                        <div className="bg-slate-950 h-full w-full rounded-[1.5rem] overflow-hidden relative flex flex-col">
+                        <div className="bg-slate-950 h-full w-full rounded-[2rem] overflow-hidden relative flex flex-col">
 
                             {/* Top Bar */}
-                            <div className="h-10 w-full bg-slate-900/50 backdrop-blur flex items-center justify-center border-b border-white/5 z-10 shrink-0">
-                                <span className="text-[10px] font-bold tracking-widest text-slate-500">NEURAFAB</span>
+                            <div className="h-12 w-full bg-slate-900/50 backdrop-blur flex items-center justify-center border-b border-white/5 z-10 shrink-0">
+                                <span className="text-xs font-bold tracking-widest text-slate-500">NEURAFAB</span>
                             </div>
 
                             {/* Main Content Area */}
-                            <div className="flex-1 p-4 flex items-center justify-center relative">
+                            <div className="flex-1 p-5 flex items-center justify-center relative">
                                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-800/10 to-transparent pointer-events-none" />
 
-                                <div className="w-full relative z-10 transition-all duration-500 transform animate-in fade-in slide-in-from-bottom-4 scale-90">
+                                <div className="w-full relative z-10 transition-all duration-500 transform animate-in fade-in slide-in-from-bottom-4">
                                     {currentStepsData[currentStep].detail}
                                 </div>
                             </div>
 
                             {/* Bottom Nav */}
-                            <div className="h-10 w-full bg-slate-900 border-t border-white/5 flex justify-around items-center px-6 shrink-0">
-                                <div className={`w-10 h-1 rounded-full ${themeColor}`} />
+                            <div className="h-12 w-full bg-slate-900 border-t border-white/5 flex justify-around items-center px-6 shrink-0">
+                                <div className={`w-12 h-1.5 rounded-full ${themeColor}`} />
                             </div>
                         </div>
 
@@ -489,13 +487,13 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             </div>
 
             {/* Footer / CTA */}
-            <div className="mt-6 text-center border-t border-slate-800 pt-4 shrink-0">
-                <p className="text-slate-400 text-sm mb-4">
+            <div className="mt-4 text-center border-t border-slate-800 pt-4 shrink-0 pb-2">
+                <p className="text-slate-400 text-sm mb-3">
                     Neurafab: <span className="text-blue-400 font-bold">消费者</span> 开脑洞 + <span className="text-purple-400 font-bold">设计师</span> 卖才华 + <span className="text-green-400 font-bold">农场主</span> 出苦力 = 完美闭环
                 </p>
                 <button
                     onClick={handleActionClick}
-                    className={`px-8 py-3 rounded-full font-bold text-base transition-all text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 ${themeColor}`}
+                    className={`px-12 py-3.5 rounded-full font-bold text-lg transition-all text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 ${themeColor}`}
                 >
                     {activeRole === 'consumer' ? '我要造物' :
                         activeRole === 'designer' ? '我要卖艺' : '我要接单'}
