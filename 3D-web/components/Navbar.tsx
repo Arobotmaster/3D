@@ -56,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRole, onRoleChange, activ
             className={`flex items-center gap-2 text-sm font-medium transition-colors mr-2 ${activeTab === 'intro' ? 'text-blue-400' : 'text-slate-400 hover:text-white'}`}
           >
             <Info size={18} />
-            <span>平台介绍</span>
+            <span className="hidden sm:inline">平台介绍</span>
           </button>
           <div className="flex bg-slate-900 rounded-full p-1 border border-slate-800">
             <button

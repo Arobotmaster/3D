@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
+import { SubNavbar } from './components/SubNavbar';
 import { ConsumerView } from './components/ConsumerView';
 import { FarmDashboard } from './components/FarmDashboard';
 import { AIAssistant } from './components/AIAssistant';
@@ -46,6 +47,12 @@ const App: React.FC = () => {
       <Navbar
         currentRole={userRole}
         onRoleChange={handleRoleChange}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+
+      <SubNavbar
+        currentRole={userRole}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />

@@ -19,6 +19,8 @@ import {
     UploadCloud
 } from 'lucide-react';
 
+import { UserRole } from '../types';
+
 // 定义类型
 type Role = 'consumer' | 'designer' | 'farmer';
 
@@ -31,7 +33,7 @@ interface Step {
 }
 
 interface PlatformIntroProps {
-    onNavigate: (role: Role, tab: string) => void;
+    onNavigate: (role: UserRole, tab: string) => void;
 }
 
 export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
@@ -323,16 +325,18 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
 
     const themeColor = getThemeColor();
 
+
+
     const handleActionClick = () => {
         switch (activeRole) {
             case 'consumer':
-                onNavigate('consumer', 'create');
+                onNavigate(UserRole.CONSUMER, 'create');
                 break;
             case 'designer':
-                onNavigate('designer', 'tools');
+                onNavigate(UserRole.DESIGNER, 'tools');
                 break;
             case 'farmer':
-                onNavigate('farmer', 'dashboard');
+                onNavigate(UserRole.FARM_OWNER, 'dashboard');
                 break;
         }
     };
