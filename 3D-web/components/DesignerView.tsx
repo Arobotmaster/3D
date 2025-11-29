@@ -145,7 +145,8 @@ export const DesignerView: React.FC<{ activeTab?: string }> = ({ activeTab = 'to
                         return newMessages;
                     });
                 },
-                systemPrompt
+                systemPrompt,
+                "Qwen/Qwen2.5-72B-Instruct"
             );
         } catch (e) {
             console.error(e);

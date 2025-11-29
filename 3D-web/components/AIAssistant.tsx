@@ -48,7 +48,7 @@ export const AIAssistant: React.FC = () => {
         setMessages(prev => prev.map(msg =>
           msg.id === aiMsgId ? { ...msg, text: text } : msg
         ));
-      });
+      }, undefined, "Qwen/Qwen2.5-72B-Instruct");
     } catch (e) {
       console.error(e);
       setMessages(prev => prev.map(msg =>
@@ -80,8 +80,8 @@ export const AIAssistant: React.FC = () => {
           {messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] rounded-2xl p-4 ${msg.role === 'user'
-                  ? 'bg-blue-600 text-white rounded-tr-none'
-                  : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'
+                ? 'bg-blue-600 text-white rounded-tr-none'
+                : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'
                 }`}>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                 <span className="text-[10px] opacity-50 block mt-2 text-right">
