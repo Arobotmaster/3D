@@ -337,11 +337,11 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 animate-in fade-in duration-500">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 animate-in fade-in duration-500 h-[calc(100vh-4rem)] flex flex-col justify-center">
 
             {/* Header / Role Switcher */}
-            <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent mb-6">
+            <div className="text-center mb-6 shrink-0">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent mb-4">
                     Neurafab.ai：搞点好玩的
                 </h2>
 
@@ -353,7 +353,7 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
 
                     <button
                         onClick={() => handleRoleChange('consumer')}
-                        className={`relative z-10 w-[105px] py-2 rounded-full flex items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-300 ${activeRole === 'consumer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                        className={`relative z-10 w-[105px] py-1.5 rounded-full flex items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-300 ${activeRole === 'consumer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                             }`}
                     >
                         <User className="w-3.5 h-3.5" />
@@ -361,7 +361,7 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
                     </button>
                     <button
                         onClick={() => handleRoleChange('designer')}
-                        className={`relative z-10 w-[105px] py-2 rounded-full flex items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-300 ${activeRole === 'designer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                        className={`relative z-10 w-[105px] py-1.5 rounded-full flex items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-300 ${activeRole === 'designer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                             }`}
                     >
                         <PenTool className="w-3.5 h-3.5" />
@@ -369,7 +369,7 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
                     </button>
                     <button
                         onClick={() => handleRoleChange('farmer')}
-                        className={`relative z-10 w-[105px] py-2 rounded-full flex items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-300 ${activeRole === 'farmer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                        className={`relative z-10 w-[105px] py-1.5 rounded-full flex items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-300 ${activeRole === 'farmer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                             }`}
                     >
                         <Printer className="w-3.5 h-3.5" />
@@ -379,10 +379,10 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             </div>
 
             {/* Interactive Flow Area */}
-            <div className="grid md:grid-cols-2 gap-12">
+            <div className="grid md:grid-cols-2 gap-8 items-center flex-1 min-h-0">
 
                 {/* Left: Steps Navigation */}
-                <div className="space-y-4">
+                <div className="space-y-3">
                     {currentStepsData.map((step, index) => {
                         const isActive = currentStep === index;
                         const Icon = step.icon;
@@ -406,22 +406,33 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
                             <div
                                 key={step.id}
                                 onClick={() => setCurrentStep(index)}
-                                className={`relative group cursor-pointer p-6 rounded-2xl border transition-all duration-300 ${isActive
-                                    ? `bg-slate-800/80 ${activeBorderClass} shadow-lg`
+                                className={`relative group cursor-pointer p-4 rounded-xl border transition-all duration-300 overflow-hidden ${isActive
+                                    ? `border-transparent shadow-lg`
                                     : 'bg-slate-900 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
                                     }`}
                             >
-                                <div className="flex items-start gap-4">
-                                    <div className={`p-3 rounded-xl transition-colors duration-300 ${isActive ? `${activeBgClass} text-white` : 'bg-slate-800 text-slate-400'
+                                {/* Animated Background for Active Step */}
+                                {isActive && (
+                                    <div className={`absolute inset-0 opacity-20 transition-all duration-500 ${activeRole === 'consumer' ? 'bg-blue-600' :
+                                        activeRole === 'designer' ? 'bg-purple-600' : 'bg-green-600'
+                                        }`} />
+                                )}
+
+                                {/* Active Border Gradient (Simulated) */}
+                                {isActive && (
+                                    <div className={`absolute inset-0 border-2 rounded-xl pointer-events-none ${activeBorderClass}`} />
+                                )}
+                                <div className="flex items-start gap-3">
+                                    <div className={`p-2 rounded-lg transition-colors duration-300 ${isActive ? `${activeBgClass} text-white` : 'bg-slate-800 text-slate-400'
                                         }`}>
-                                        <Icon className="w-6 h-6" />
+                                        <Icon className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <h3 className={`font-bold text-lg mb-1 transition-colors ${isActive ? activeTextClass : 'text-slate-300'
+                                        <h3 className={`font-bold text-base mb-0.5 transition-colors ${isActive ? activeTextClass : 'text-slate-300'
                                             }`}>
                                             {index + 1}. {step.title}
                                         </h3>
-                                        <p className="text-sm text-slate-500 leading-relaxed">
+                                        <p className="text-xs text-slate-500 leading-relaxed">
                                             {step.desc}
                                         </p>
                                     </div>
@@ -429,12 +440,12 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
 
                                 {/* Arrow Connector */}
                                 {index !== currentStepsData.length - 1 && (
-                                    <div className={`absolute left-[42px] -bottom-8 w-0.5 h-8 bg-slate-800 group-hover:bg-slate-700 transition-colors ${isActive ? 'bg-slate-700' : ''}`} />
+                                    <div className={`absolute left-[34px] -bottom-6 w-0.5 h-6 bg-slate-800 group-hover:bg-slate-700 transition-colors ${isActive ? 'bg-slate-700' : ''}`} />
                                 )}
 
                                 {/* Active Indicator Arrow */}
                                 {isActive && (
-                                    <ArrowRight className={`absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 animate-pulse hidden md:block ${activeTextClass}`} />
+                                    <ArrowRight className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-pulse hidden md:block ${activeTextClass}`} />
                                 )}
                             </div>
                         );
@@ -442,29 +453,29 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
                 </div>
 
                 {/* Right: Dynamic Detail View */}
-                <div className="relative flex items-center justify-center">
+                <div className="relative flex items-center justify-center h-full">
                     {/* Phone Frame */}
-                    <div className="bg-slate-900 border-4 border-slate-800 rounded-[2.5rem] p-2 h-[500px] shadow-2xl w-full max-w-[340px] overflow-hidden ring-1 ring-white/5 relative">
+                    <div className="bg-slate-900 border-4 border-slate-800 rounded-[2rem] p-2 h-[420px] shadow-2xl w-full max-w-[300px] overflow-hidden ring-1 ring-white/5 relative">
                         {/* Dynamic Content Container */}
-                        <div className="bg-slate-950 h-full w-full rounded-[2rem] overflow-hidden relative flex flex-col">
+                        <div className="bg-slate-950 h-full w-full rounded-[1.5rem] overflow-hidden relative flex flex-col">
 
                             {/* Top Bar */}
-                            <div className="h-14 w-full bg-slate-900/50 backdrop-blur flex items-center justify-center border-b border-white/5 z-10 shrink-0">
-                                <span className="text-xs font-bold tracking-widest text-slate-500">NEURAFAB</span>
+                            <div className="h-10 w-full bg-slate-900/50 backdrop-blur flex items-center justify-center border-b border-white/5 z-10 shrink-0">
+                                <span className="text-[10px] font-bold tracking-widest text-slate-500">NEURAFAB</span>
                             </div>
 
                             {/* Main Content Area */}
-                            <div className="flex-1 p-6 flex items-center justify-center relative">
+                            <div className="flex-1 p-4 flex items-center justify-center relative">
                                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-800/10 to-transparent pointer-events-none" />
 
-                                <div className="w-full relative z-10 transition-all duration-500 transform animate-in fade-in slide-in-from-bottom-4">
+                                <div className="w-full relative z-10 transition-all duration-500 transform animate-in fade-in slide-in-from-bottom-4 scale-90">
                                     {currentStepsData[currentStep].detail}
                                 </div>
                             </div>
 
                             {/* Bottom Nav */}
-                            <div className="h-12 w-full bg-slate-900 border-t border-white/5 flex justify-around items-center px-6 shrink-0">
-                                <div className={`w-12 h-1 rounded-full ${themeColor}`} />
+                            <div className="h-10 w-full bg-slate-900 border-t border-white/5 flex justify-around items-center px-6 shrink-0">
+                                <div className={`w-10 h-1 rounded-full ${themeColor}`} />
                             </div>
                         </div>
 
@@ -478,13 +489,13 @@ export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
             </div>
 
             {/* Footer / CTA */}
-            <div className="mt-16 text-center border-t border-slate-800 pt-8">
-                <p className="text-slate-400 text-base mb-6">
+            <div className="mt-6 text-center border-t border-slate-800 pt-4 shrink-0">
+                <p className="text-slate-400 text-sm mb-4">
                     Neurafab: <span className="text-blue-400 font-bold">消费者</span> 开脑洞 + <span className="text-purple-400 font-bold">设计师</span> 卖才华 + <span className="text-green-400 font-bold">农场主</span> 出苦力 = 完美闭环
                 </p>
                 <button
                     onClick={handleActionClick}
-                    className={`px-10 py-4 rounded-full font-bold text-lg transition-all text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 ${themeColor}`}
+                    className={`px-8 py-3 rounded-full font-bold text-base transition-all text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 ${themeColor}`}
                 >
                     {activeRole === 'consumer' ? '我要造物' :
                         activeRole === 'designer' ? '我要卖艺' : '我要接单'}

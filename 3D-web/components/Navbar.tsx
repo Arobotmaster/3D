@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserRole } from '../types';
-import { Hexagon, ShoppingBag, Users, LayoutDashboard, BookOpen, ClipboardList, Wrench, PenTool, Box, Palette, Info } from 'lucide-react';
+import { Hexagon, ShoppingBag, Users, LayoutDashboard, BookOpen, ClipboardList, Wrench, PenTool, Box, Palette, Info, Package } from 'lucide-react';
 
 interface NavbarProps {
   currentRole: UserRole;
@@ -26,6 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRole, onRoleChange, activ
               {currentRole === UserRole.CONSUMER && (
                 <>
                   <NavItem icon={<ShoppingBag size={18} />} label="设计与创造" active={activeTab === 'create'} onClick={() => onTabChange('create')} />
+                  <NavItem icon={<Package size={18} />} label="订单追踪" active={activeTab === 'track'} onClick={() => onTabChange('track')} />
                   <NavItem icon={<Users size={18} />} label="社区 & 制造者" active={activeTab === 'community'} onClick={() => onTabChange('community')} />
                 </>
               )}
@@ -53,27 +54,35 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRole, onRoleChange, activ
         <div className="flex items-center gap-4">
           <button
             onClick={() => onTabChange('intro')}
-            className={`flex items-center gap-2 text-sm font-medium transition-colors mr-2 ${activeTab === 'intro' ? 'text-blue-400' : 'text-slate-400 hover:text-white'}`}
+            className={`hidden md:flex items-center gap-2 text-sm font-medium transition-colors mr-2 ${activeTab === 'intro' ? 'text-blue-400' : 'text-slate-400 hover:text-white'}`}
           >
             <Info size={18} />
-            <span className="hidden sm:inline">平台介绍</span>
+            <span>平台介绍</span>
           </button>
-          <div className="flex bg-slate-900 rounded-full p-1 border border-slate-800">
+          <div className="flex bg-slate-900 rounded-full p-1 border border-slate-800 relative">
+            {/* Sliding Pill */}
+            <div
+              className={`absolute top-1 bottom-1 rounded-full transition-all duration-300 ease-in-out ${currentRole === UserRole.CONSUMER ? 'left-1 w-[72px] bg-blue-600 shadow-lg shadow-blue-500/25' :
+                currentRole === UserRole.DESIGNER ? 'left-[80px] w-[72px] bg-purple-600 shadow-lg shadow-purple-500/25' :
+                  'left-[159px] w-[72px] bg-emerald-600 shadow-lg shadow-emerald-500/25'
+                } ${activeTab === 'intro' ? 'opacity-0' : 'opacity-100'}`}
+            />
+
             <button
               onClick={() => { onRoleChange(UserRole.CONSUMER); onTabChange('create'); }}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${currentRole === UserRole.CONSUMER ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' : 'text-slate-400 hover:text-white'}`}
+              className={`relative z-10 px-3 py-1.5 rounded-full text-xs font-medium transition-all w-[72px] ${currentRole === UserRole.CONSUMER && activeTab !== 'intro' ? 'text-white' : 'text-slate-400 hover:text-white'}`}
             >
               消费者
             </button>
             <button
               onClick={() => { onRoleChange(UserRole.DESIGNER); onTabChange('tools'); }}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${currentRole === UserRole.DESIGNER ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/25' : 'text-slate-400 hover:text-white'}`}
+              className={`relative z-10 px-3 py-1.5 rounded-full text-xs font-medium transition-all w-[72px] ${currentRole === UserRole.DESIGNER && activeTab !== 'intro' ? 'text-white' : 'text-slate-400 hover:text-white'}`}
             >
               设计师
             </button>
             <button
               onClick={() => { onRoleChange(UserRole.FARM_OWNER); onTabChange('dashboard'); }}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${currentRole === UserRole.FARM_OWNER ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/25' : 'text-slate-400 hover:text-white'}`}
+              className={`relative z-10 px-3 py-1.5 rounded-full text-xs font-medium transition-all w-[72px] ${currentRole === UserRole.FARM_OWNER && activeTab !== 'intro' ? 'text-white' : 'text-slate-400 hover:text-white'}`}
             >
               农场主
             </button>

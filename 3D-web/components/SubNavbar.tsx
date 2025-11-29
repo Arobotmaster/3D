@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserRole } from '../types';
-import { ShoppingBag, Users, LayoutDashboard, BookOpen, ClipboardList, Wrench, PenTool, Box, Palette } from 'lucide-react';
+import { ShoppingBag, Users, LayoutDashboard, BookOpen, ClipboardList, Wrench, PenTool, Box, Palette, Info, Package } from 'lucide-react';
 
 interface SubNavbarProps {
     currentRole: UserRole;
@@ -9,14 +9,13 @@ interface SubNavbarProps {
 }
 
 export const SubNavbar: React.FC<SubNavbarProps> = ({ currentRole, activeTab, onTabChange }) => {
-    if (activeTab === 'intro') return null;
-
     return (
         <div className="md:hidden border-b border-slate-800 bg-slate-950/50 backdrop-blur-sm overflow-x-auto">
             <div className="flex items-center px-4 h-12 gap-6 min-w-max">
                 {currentRole === UserRole.CONSUMER && (
                     <>
                         <NavItem icon={<ShoppingBag size={16} />} label="设计与创造" active={activeTab === 'create'} onClick={() => onTabChange('create')} />
+                        <NavItem icon={<Package size={16} />} label="订单追踪" active={activeTab === 'track'} onClick={() => onTabChange('track')} />
                         <NavItem icon={<Users size={16} />} label="社区 & 制造者" active={activeTab === 'community'} onClick={() => onTabChange('community')} />
                     </>
                 )}
@@ -37,6 +36,9 @@ export const SubNavbar: React.FC<SubNavbarProps> = ({ currentRole, activeTab, on
                         <NavItem icon={<Palette size={16} />} label="创作者收益" active={activeTab === 'earnings'} onClick={() => onTabChange('earnings')} />
                     </>
                 )}
+
+                <div className="w-px h-4 bg-slate-800 mx-2" />
+                <NavItem icon={<Info size={16} />} label="平台介绍" active={activeTab === 'intro'} onClick={() => onTabChange('intro')} />
             </div>
         </div>
     );

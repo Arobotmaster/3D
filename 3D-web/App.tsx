@@ -28,7 +28,7 @@ const App: React.FC = () => {
     if (activeTab === 'intro') return <PlatformIntro onNavigate={handleIntroNavigate} />;
 
     if (userRole === UserRole.CONSUMER) {
-      if (activeTab === 'create' || activeTab === 'track') return <ConsumerView />; // Handle internal toggle in ConsumerView, but if set from nav, default to ConsumerView
+      if (activeTab === 'create' || activeTab === 'track') return <ConsumerView activeTab={activeTab} />;
       if (activeTab === 'community') return <CommunityView />;
     } else if (userRole === UserRole.FARM_OWNER) {
       if (activeTab === 'dashboard') return <FarmDashboard />;

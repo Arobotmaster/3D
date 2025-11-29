@@ -60,8 +60,11 @@ const MY_ORDERS = [
     }
 ];
 
-export const ConsumerView: React.FC = () => {
-    const [view, setView] = useState<'create' | 'track'>('create');
+interface ConsumerViewProps {
+    activeTab?: string;
+}
+
+export const ConsumerView: React.FC<ConsumerViewProps> = ({ activeTab = 'create' }) => {
     const [prompt, setPrompt] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [generatedModel, setGeneratedModel] = useState<any>(null);
@@ -184,25 +187,9 @@ export const ConsumerView: React.FC = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-            {/* Sub-Navigation Toggle */}
-            <div className="flex justify-center mb-8">
-                <div className="bg-slate-900 p-1 rounded-xl border border-slate-800 inline-flex">
-                    <button
-                        onClick={() => setView('create')}
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${view === 'create' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
-                    >
-                        <Wand2 size={16} /> 设计与创造
-                    </button>
-                    <button
-                        onClick={() => setView('track')}
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${view === 'track' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
-                    >
-                        <Package size={16} /> 订单追踪
-                    </button>
-                </div>
-            </div>
+            {/* Sub-Navigation Toggle Removed - Moved to Top Navbar */}
 
-            {view === 'create' ? (
+            {activeTab === 'create' ? (
                 // CREATE VIEW - ISSUE Methodology Implementation
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-12rem)]">
                     {/* Left: Chat Interface (ISSUE Process) */}
