@@ -18,8 +18,13 @@ const App: React.FC = () => {
     setUserRole(role);
   };
 
+  const handleIntroNavigate = (role: UserRole, tab: string) => {
+    setUserRole(role);
+    setActiveTab(tab);
+  };
+
   const renderContent = () => {
-    if (activeTab === 'intro') return <PlatformIntro />;
+    if (activeTab === 'intro') return <PlatformIntro onNavigate={handleIntroNavigate} />;
 
     if (userRole === UserRole.CONSUMER) {
       if (activeTab === 'create' || activeTab === 'track') return <ConsumerView />; // Handle internal toggle in ConsumerView, but if set from nav, default to ConsumerView

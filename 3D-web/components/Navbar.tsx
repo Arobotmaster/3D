@@ -21,27 +21,31 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRole, onRoleChange, activ
         </div>
 
         <div className="hidden md:flex items-center space-x-8">
-          {currentRole === UserRole.CONSUMER && (
+          {activeTab !== 'intro' && (
             <>
-              <NavItem icon={<ShoppingBag size={18} />} label="设计与创造" active={activeTab === 'create'} onClick={() => onTabChange('create')} />
-              <NavItem icon={<Users size={18} />} label="社区 & 制造者" active={activeTab === 'community'} onClick={() => onTabChange('community')} />
-            </>
-          )}
+              {currentRole === UserRole.CONSUMER && (
+                <>
+                  <NavItem icon={<ShoppingBag size={18} />} label="设计与创造" active={activeTab === 'create'} onClick={() => onTabChange('create')} />
+                  <NavItem icon={<Users size={18} />} label="社区 & 制造者" active={activeTab === 'community'} onClick={() => onTabChange('community')} />
+                </>
+              )}
 
-          {currentRole === UserRole.FARM_OWNER && (
-            <>
-              <NavItem icon={<LayoutDashboard size={18} />} label="仪表盘" active={activeTab === 'dashboard'} onClick={() => onTabChange('dashboard')} />
-              <NavItem icon={<ClipboardList size={18} />} label="接单中心" active={activeTab === 'orders'} onClick={() => onTabChange('orders')} />
-              <NavItem icon={<BookOpen size={18} />} label="技术极客" active={activeTab === 'hub'} onClick={() => onTabChange('hub')} />
-              <NavItem icon={<Wrench size={18} />} label="AI 维修助手" active={activeTab === 'repair'} onClick={() => onTabChange('repair')} />
-            </>
-          )}
+              {currentRole === UserRole.FARM_OWNER && (
+                <>
+                  <NavItem icon={<LayoutDashboard size={18} />} label="仪表盘" active={activeTab === 'dashboard'} onClick={() => onTabChange('dashboard')} />
+                  <NavItem icon={<ClipboardList size={18} />} label="接单中心" active={activeTab === 'orders'} onClick={() => onTabChange('orders')} />
+                  <NavItem icon={<BookOpen size={18} />} label="技术极客" active={activeTab === 'hub'} onClick={() => onTabChange('hub')} />
+                  <NavItem icon={<Wrench size={18} />} label="AI 维修助手" active={activeTab === 'repair'} onClick={() => onTabChange('repair')} />
+                </>
+              )}
 
-          {currentRole === UserRole.DESIGNER && (
-            <>
-              <NavItem icon={<PenTool size={18} />} label="AI 工具箱" active={activeTab === 'tools'} onClick={() => onTabChange('tools')} />
-              <NavItem icon={<Box size={18} />} label="我的模型库" active={activeTab === 'library'} onClick={() => onTabChange('library')} />
-              <NavItem icon={<Palette size={18} />} label="创作者收益" active={activeTab === 'earnings'} onClick={() => onTabChange('earnings')} />
+              {currentRole === UserRole.DESIGNER && (
+                <>
+                  <NavItem icon={<PenTool size={18} />} label="AI 工具箱" active={activeTab === 'tools'} onClick={() => onTabChange('tools')} />
+                  <NavItem icon={<Box size={18} />} label="我的模型库" active={activeTab === 'library'} onClick={() => onTabChange('library')} />
+                  <NavItem icon={<Palette size={18} />} label="创作者收益" active={activeTab === 'earnings'} onClick={() => onTabChange('earnings')} />
+                </>
+              )}
             </>
           )}
         </div>

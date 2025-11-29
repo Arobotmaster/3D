@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
     Sparkles,
@@ -29,7 +30,11 @@ interface Step {
     detail: React.ReactNode;
 }
 
-export const PlatformIntro = () => {
+interface PlatformIntroProps {
+    onNavigate: (role: Role, tab: string) => void;
+}
+
+export const PlatformIntro: React.FC<PlatformIntroProps> = ({ onNavigate }) => {
     const [activeRole, setActiveRole] = useState<Role>('consumer');
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -318,12 +323,26 @@ export const PlatformIntro = () => {
 
     const themeColor = getThemeColor();
 
+    const handleActionClick = () => {
+        switch (activeRole) {
+            case 'consumer':
+                onNavigate('consumer', 'create');
+                break;
+            case 'designer':
+                onNavigate('designer', 'tools');
+                break;
+            case 'farmer':
+                onNavigate('farmer', 'dashboard');
+                break;
+        }
+    };
+
     return (
-        <div className="max-w-5xl mx-auto p-6 bg-slate-950 min-h-[600px] text-slate-200 font-sans rounded-xl shadow-2xl overflow-hidden border border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 animate-in fade-in duration-500">
 
             {/* Header / Role Switcher */}
             <div className="text-center mb-10">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent mb-6">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent mb-6">
                     Neurafab.ai：搞点好玩的
                 </h2>
 
@@ -361,7 +380,7 @@ export const PlatformIntro = () => {
             </div>
 
             {/* Interactive Flow Area */}
-            <div className={`grid md:grid-cols-2 gap-8 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+            <div className={`grid md:grid-cols-2 gap-12 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
 
                 {/* Left: Steps Navigation */}
                 <div className="space-y-4">
@@ -388,18 +407,18 @@ export const PlatformIntro = () => {
                             <div
                                 key={step.id}
                                 onClick={() => setCurrentStep(index)}
-                                className={`relative group cursor-pointer p-4 rounded-xl border transition-all duration-300 ${isActive
-                                        ? `bg-slate-800/80 ${activeBorderClass} shadow-lg`
-                                        : 'bg-slate-900 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
+                                className={`relative group cursor-pointer p-6 rounded-2xl border transition-all duration-300 ${isActive
+                                    ? `bg-slate-800/80 ${activeBorderClass} shadow-lg`
+                                    : 'bg-slate-900 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
                                     }`}
                             >
                                 <div className="flex items-start gap-4">
-                                    <div className={`p-3 rounded-lg transition-colors duration-300 ${isActive ? `${activeBgClass} text-white` : 'bg-slate-800 text-slate-400'
+                                    <div className={`p-3 rounded-xl transition-colors duration-300 ${isActive ? `${activeBgClass} text-white` : 'bg-slate-800 text-slate-400'
                                         }`}>
                                         <Icon className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h3 className={`font-bold mb-1 transition-colors ${isActive ? activeTextClass : 'text-slate-300'
+                                        <h3 className={`font-bold text-lg mb-1 transition-colors ${isActive ? activeTextClass : 'text-slate-300'
                                             }`}>
                                             {index + 1}. {step.title}
                                         </h3>
@@ -411,12 +430,12 @@ export const PlatformIntro = () => {
 
                                 {/* Arrow Connector */}
                                 {index !== currentStepsData.length - 1 && (
-                                    <div className={`absolute left-[39px] -bottom-6 w-0.5 h-6 bg-slate-800 group-hover:bg-slate-700 transition-colors ${isActive ? 'bg-slate-700' : ''}`} />
+                                    <div className={`absolute left-[42px] -bottom-8 w-0.5 h-8 bg-slate-800 group-hover:bg-slate-700 transition-colors ${isActive ? 'bg-slate-700' : ''}`} />
                                 )}
 
                                 {/* Active Indicator Arrow */}
                                 {isActive && (
-                                    <ArrowRight className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-pulse hidden md:block ${activeTextClass}`} />
+                                    <ArrowRight className={`absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 animate-pulse hidden md:block ${activeTextClass}`} />
                                 )}
                             </div>
                         );
@@ -424,9 +443,9 @@ export const PlatformIntro = () => {
                 </div>
 
                 {/* Right: Dynamic Detail View */}
-                <div className="relative">
+                <div className="relative flex items-center justify-center">
                     {/* Phone Frame */}
-                    <div className="bg-slate-900 border-4 border-slate-800 rounded-[2.5rem] p-2 h-[400px] shadow-2xl w-full max-w-[320px] mx-auto overflow-hidden ring-1 ring-white/5 relative">
+                    <div className="bg-slate-900 border-4 border-slate-800 rounded-[2.5rem] p-2 h-[500px] shadow-2xl w-full max-w-[340px] overflow-hidden ring-1 ring-white/5 relative">
                         {/* Dynamic Content Container */}
                         <div className="bg-slate-950 h-full w-full rounded-[2rem] overflow-hidden relative flex flex-col">
 
@@ -452,7 +471,7 @@ export const PlatformIntro = () => {
 
                         {/* Connecting Lines (Decorative) */}
                         <div className={`absolute -z-10 -right-20 top-1/2 w-40 h-40 blur-[80px] rounded-full transition-colors duration-500 ${activeRole === 'consumer' ? 'bg-blue-500/20' :
-                                activeRole === 'designer' ? 'bg-purple-500/20' : 'bg-green-500/20'
+                            activeRole === 'designer' ? 'bg-purple-500/20' : 'bg-green-500/20'
                             }`} />
                     </div>
                 </div>
@@ -460,11 +479,14 @@ export const PlatformIntro = () => {
             </div>
 
             {/* Footer / CTA */}
-            <div className="mt-12 text-center border-t border-slate-800 pt-6">
-                <p className="text-slate-400 text-sm mb-4">
-                    Neurafab: <span className="text-blue-400">消费者</span> 开脑洞 + <span className="text-purple-400">设计师</span> 卖才华 + <span className="text-green-400">农场主</span> 出苦力 = 完美闭环
+            <div className="mt-16 text-center border-t border-slate-800 pt-8">
+                <p className="text-slate-400 text-base mb-6">
+                    Neurafab: <span className="text-blue-400 font-bold">消费者</span> 开脑洞 + <span className="text-purple-400 font-bold">设计师</span> 卖才华 + <span className="text-green-400 font-bold">农场主</span> 出苦力 = 完美闭环
                 </p>
-                <button className={`px-8 py-3 rounded-full font-bold transition-all text-white shadow-lg hover:shadow-xl ${themeColor}`}>
+                <button
+                    onClick={handleActionClick}
+                    className={`px-10 py-4 rounded-full font-bold text-lg transition-all text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 ${themeColor}`}
+                >
                     {activeRole === 'consumer' ? '我要造物' :
                         activeRole === 'designer' ? '我要卖艺' : '我要接单'}
                 </button>
