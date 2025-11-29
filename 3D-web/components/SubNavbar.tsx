@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserRole } from '../types';
-import { ShoppingBag, Users, LayoutDashboard, BookOpen, ClipboardList, Wrench, PenTool, Box, Palette, Info, Package } from 'lucide-react';
+import { ShoppingBag, Users, LayoutDashboard, BookOpen, ClipboardList, Wrench, PenTool, Box, Palette, Info, Package, Bot } from 'lucide-react';
 
 interface SubNavbarProps {
     currentRole: UserRole;
@@ -34,6 +34,7 @@ export const SubNavbar: React.FC<SubNavbarProps> = ({ currentRole, activeTab, on
                         <NavItem icon={<PenTool size={16} />} label="AI 工具箱" active={activeTab === 'tools'} onClick={() => onTabChange('tools')} />
                         <NavItem icon={<Box size={16} />} label="我的模型库" active={activeTab === 'library'} onClick={() => onTabChange('library')} />
                         <NavItem icon={<Palette size={16} />} label="创作者收益" active={activeTab === 'earnings'} onClick={() => onTabChange('earnings')} />
+                        <NavItem icon={<Bot size={16} />} label="AI 设计助手" active={activeTab === 'ai-assistant'} onClick={() => onTabChange('ai-assistant')} />
                     </>
                 )}
 

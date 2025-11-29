@@ -1,5 +1,6 @@
-import React from 'react';
-import { ArrowRight, Image as ImageIcon, Box, Type, Layers, Frame, Lightbulb, Smartphone, Download, Printer, DollarSign, TrendingUp, Eye } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { ArrowRight, Image as ImageIcon, Box, Type, Layers, Frame, Lightbulb, Smartphone, Download, Printer, DollarSign, TrendingUp, Eye, Bot, Send, Sparkles } from 'lucide-react';
+import { generateAIResponse } from '../services/geminiService';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 // Using standard Lucide icons that are definitely available
@@ -92,6 +93,74 @@ const EARNINGS_DATA = [
 ];
 
 export const DesignerView: React.FC<{ activeTab?: string }> = ({ activeTab = 'tools' }) => {
+    // AI Assistant State
+    const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>([
+        { role: 'model', text: "你好！我是你的 AI 设计助手。我可以帮你构思创意、推荐合适的 AI 工具，或者提供设计方案建议。你想做什么？" }
+    ]);
+    const [input, setInput] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
+    const chatEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (activeTab === 'ai-assistant') {
+            chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages, activeTab]);
+
+    const handleSendMessage = async () => {
+        if (!input.trim()) return;
+
+        const userText = input;
+        setInput('');
+        setMessages(prev => [...prev, { role: 'user', text: userText }]);
+        setIsGenerating(true);
+
+        const aiMsgId = Date.now().toString();
+        setMessages(prev => [...prev, { role: 'model', text: '' }]);
+
+        const history = messages.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n');
+        const fullPrompt = `${history}\nUser: ${userText}\nAssistant:`;
+
+        const systemPrompt = `
+        你是一个专业的 3D 设计与创意顾问。你的目标是帮助设计师利用现有的 AI 工具（如图片生成 3D、灯箱生成器、浮雕生成器等）来实现他们的创意。
+        
+        请根据用户的描述：
+        1. 分析他们的设计需求。
+        2. 推荐最合适的工具（参考 DESIGN_TOOLS 列表）。
+        3. 提供具体的操作建议或设计思路。
+        
+        保持语气专业、富有创造力且乐于助人。
+        `;
+
+        try {
+            await generateAIResponse(
+                fullPrompt,
+                (chunk) => {
+                    setMessages(prev => {
+                        const newMessages = [...prev];
+                        const lastMsg = newMessages[newMessages.length - 1];
+                        if (lastMsg.role === 'model') {
+                            lastMsg.text = chunk;
+                        }
+                        return newMessages;
+                    });
+                },
+                systemPrompt
+            );
+        } catch (e) {
+            console.error(e);
+            setMessages(prev => {
+                const newMessages = [...prev];
+                const lastMsg = newMessages[newMessages.length - 1];
+                if (lastMsg.role === 'model' && !lastMsg.text) {
+                    lastMsg.text = "抱歉，我遇到了一些问题，请稍后再试。";
+                }
+                return newMessages;
+            });
+        } finally {
+            setIsGenerating(false);
+        }
+    };
 
     const renderTools = () => (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -220,6 +289,71 @@ export const DesignerView: React.FC<{ activeTab?: string }> = ({ activeTab = 'to
         </div>
     );
 
+    const renderAIAssistant = () => (
+        <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden h-[calc(100vh-16rem)] flex flex-col shadow-xl">
+            {/* Chat Header */}
+            <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center border border-purple-500/30">
+                    <Bot className="text-purple-400" size={20} />
+                </div>
+                <div>
+                    <h2 className="text-white font-bold">创意与工具顾问</h2>
+                    <p className="text-xs text-purple-400 flex items-center gap-1">
+                        <Sparkles size={10} /> 智能匹配最佳工具方案
+                    </p>
+                </div>
+            </div>
+
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-900/50">
+                {messages.map((msg, idx) => (
+                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[80%] rounded-2xl p-4 ${msg.role === 'user'
+                            ? 'bg-purple-600 text-white rounded-tr-none'
+                            : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'
+                            }`}>
+                            <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                        </div>
+                    </div>
+                ))}
+                {isGenerating && (
+                    <div className="flex justify-start">
+                        <div className="bg-slate-800 rounded-2xl rounded-tl-none p-4 border border-slate-700">
+                            <div className="flex gap-2">
+                                <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce"></div>
+                                <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce delay-100"></div>
+                                <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce delay-200"></div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                <div ref={chatEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <div className="p-4 bg-slate-950 border-t border-slate-800">
+                <div className="relative flex items-center gap-2">
+                    <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                        placeholder="描述你的创意，例如：我想做一个赛博朋克风格的耳机架..."
+                        className="flex-1 bg-slate-800 text-white rounded-xl px-4 py-3 border border-slate-700 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                        disabled={isGenerating}
+                    />
+                    <button
+                        onClick={handleSendMessage}
+                        disabled={!input.trim() || isGenerating}
+                        className="bg-purple-600 text-white p-3 rounded-xl hover:bg-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <Send size={20} />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
             {/* Dynamic Header based on Active Tab */}
@@ -230,12 +364,14 @@ export const DesignerView: React.FC<{ activeTab?: string }> = ({ activeTab = 'to
                         {activeTab === 'tools' && 'AI 工具箱'}
                         {activeTab === 'library' && '我的模型库'}
                         {activeTab === 'earnings' && '创作者收益'}
+                        {activeTab === 'ai-assistant' && 'AI 设计助手'}
                     </span>
                 </h1>
                 <p className="text-slate-400 max-w-2xl">
                     {activeTab === 'tools' && '专为设计师打造的参数化与生成式 AI 工具集。无需从零建模，快速验证创意。'}
                     {activeTab === 'library' && '管理您的原创模型资产，追踪打印数据与市场反馈。'}
                     {activeTab === 'earnings' && '查看您的设计创造的实际价值，实现创意变现。'}
+                    {activeTab === 'ai-assistant' && '您的私人创意顾问，帮您梳理思路，推荐工具，让创意落地更简单。'}
                 </p>
             </div>
 
@@ -244,6 +380,7 @@ export const DesignerView: React.FC<{ activeTab?: string }> = ({ activeTab = 'to
                 {activeTab === 'tools' && renderTools()}
                 {activeTab === 'library' && renderLibrary()}
                 {activeTab === 'earnings' && renderEarnings()}
+                {activeTab === 'ai-assistant' && renderAIAssistant()}
             </div>
         </div>
     );
